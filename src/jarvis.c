@@ -7,6 +7,10 @@
 #include "os_type.h"
 #include "user_interface.h"
 
+#if !defined(SSID) || !defined(WIFI_PWD)
+#error "Please specify 'SSID' and 'WIFI_PWD' defines during compilation"
+#endif
+
 #define	ENABLE		'E'
 #define	DISABLE		'D'
 #define	OUTPUT_BIT	BIT2
@@ -36,14 +40,12 @@ set_output(char state)
 void ICACHE_FLASH_ATTR
 wifi_init()
 {
-	const char ssid[32] = "CrimeMasterGogo";
-	const char password[32] = "nointernetaccess123!@#";
 	struct station_config stationConf;
 
 	wifi_set_opmode(STATION_MODE);
 
-	os_memcpy(&stationConf.ssid, ssid, 32);
-	os_memcpy(&stationConf.password, password, 32);
+	os_memcpy(&stationConf.ssid, SSID, 32);
+	os_memcpy(&stationConf.password, WIFI_PWD, 32);
 	wifi_station_set_config(&stationConf);
 
 	wifi_station_connect();
@@ -127,7 +129,7 @@ initialise_gpio()
 	PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_GPIO2);
 
 	//Set GPIO2 low
-	gpio_output_set(0, OUTPUT_BIT, OUTPUT_BIT2, 0);
+	gpio_output_set(0, OUTPUT_BIT, OUTPUT_BIT, 0);
 }
 
 void ICACHE_FLASH_ATTR

@@ -4,7 +4,7 @@ OBJECTS = $(SOURCES:.c=.o)
 
 
 CC = xtensa-lx106-elf-gcc
-CFLAGS	= -Os -g -O2 -Wpointer-arith -Wundef -Werror -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals  -D__ets__ -DICACHE_FLASH -I.
+override CFLAGS	+= -Os -g -O2 -Wpointer-arith -Wundef -Werror -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals  -D__ets__ -DICACHE_FLASH -I.
 LDLIBS = -nostdlib -Wl,--start-group -lc -lgcc -lpp -lphy -lnet80211 -llwip -lwpa -lmain -ldriver -Wl,--end-group 
 LDFLAGS = -Teagle.app.v6.ld
 
