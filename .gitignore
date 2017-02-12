@@ -1,0 +1,10 @@
+*.iml
+build/
+src/androidApp/Jarvis/.gradle
+src/androidApp/Jarvis/local.properties
+src/androidApp/Jarvis/.idea/workspace.xml
+src/androidApp/Jarvis/.idea/libraries
+src/androidApp/Jarvis/DS_Store
+src/androidApp/Jarvis/build
+src/androidApp/Jarvis/captures
+src/androidApp/Jarvis/externalNativeBuild
