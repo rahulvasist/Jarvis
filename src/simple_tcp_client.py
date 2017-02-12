@@ -2,8 +2,7 @@ import socket
 import sys
 
 if len(sys.argv) != 2:
-    print "Error: format is\n%s [data]" % sys.argv[0]
-    sys.exit(0);
+    print 'Format: %s [data]' % sys.argv[0]
 
 message = sys.argv[1]
 
