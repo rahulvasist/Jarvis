@@ -11,14 +11,61 @@
 #error "Please specify 'SSID' and 'WIFI_PWD' defines during compilation"
 #endif
 
+/*
+ * Enable command needs to be resent every 10 mins, like a Watchdog pat
+ * else the output will get disabled.
+ *
+ * If this functionality is not needed, then a 'Always Enable' command
+ * needs to be sent
+ */
 #define	ENABLE		'E'
+#define	ALWAYS_ENABLE	'A'
 #define	DISABLE		'D'
 #define	OUTPUT_BIT	BIT2
+
+#define	ENABLE_TIMEOUT_SECS	600
 
 char outbuffer[2048];
 
 struct espconn esp_conn;
 esp_tcp esptcp;
+
+os_timer_t	timer;
+int		secs_elapsed = 0;
+
+/* Timer handling functions */
+void enable_timer(void);
+void disable_timer(void);
+
+void set_output(char state);
+
+static void
+timer_callback(void *param)
+{
+	secs_elapsed++;
+
+	if (secs_elapsed == ENABLE_TIMEOUT_SECS) {
+		/* There is a race condition here. Assume you won't hit it */
+		disable_timer();
+		set_output(DISABLE);
+	}
+}
+
+void ICACHE_FLASH_ATTR
+enable_timer(void)
+{
+	secs_elapsed = 0;
+	os_timer_disarm(&timer);
+	os_timer_setfn(&timer, timer_callback, NULL);
+	os_timer_arm(&timer, 1000, 1);
+}
+
+void ICACHE_FLASH_ATTR
+disable_timer(void)
+{
+	secs_elapsed = 0;
+	os_timer_disarm(&timer);
+}
 
 void ICACHE_FLASH_ATTR
 set_output(char state)
@@ -70,8 +117,18 @@ server_recv(void *arg, char *usrdata, unsigned short length)
 	} else {
 		switch(usrdata[0]) {
 		case ENABLE:
+			enable_timer();
+			set_output(ENABLE);
+			break;
+
+		case ALWAYS_ENABLE:
+			disable_timer();
+			set_output(ENABLE);
+			break;
+
 		case DISABLE:
-			set_output(usrdata[0]);
+			disable_timer();
+			set_output(DISABLE);
 			break;
 		default:
 			os_printf("Error: Unknown message %c\n", usrdata[0]);
@@ -136,7 +193,7 @@ void ICACHE_FLASH_ATTR
 user_init()
 {
 	uart_init(115200, 115200);
-	wifi_init();
+	//wifi_init();
 	initialise_gpio();
 
 	esp_conn.type = ESPCONN_TCP;
