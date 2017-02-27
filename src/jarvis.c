@@ -136,7 +136,7 @@ void ICACHE_FLASH_ATTR
 user_init()
 {
 	uart_init(115200, 115200);
-	//wifi_init();
+	wifi_init();
 	initialise_gpio();
 
 	esp_conn.type = ESPCONN_TCP;

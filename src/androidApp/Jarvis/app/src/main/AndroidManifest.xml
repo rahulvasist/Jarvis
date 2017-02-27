@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -25,10 +27,13 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.net.wifi.supplicant.STATE_CHANGE"/>
+                <action android:name="android.net.wifi.supplicant.STATE_CHANGE" />
             </intent-filter>
         </receiver>
 
+        <service
+            android:name=".CommunicationService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
