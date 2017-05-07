@@ -36,7 +36,7 @@ public class CommunicationService extends IntentService {
 
                 outToServer.writeBytes(command + '\n');
                 serverReply = inFromServer.readLine();
-                Log.d("CommunicationServece", "Server reply: " + serverReply);
+                Log.d("CommunicationService", "Server reply: " + serverReply);
                 clientSocket.close();
                 return;
 
