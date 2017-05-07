@@ -3,10 +3,12 @@ package com.example.rahul.jarvis;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiManager;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
@@ -15,7 +17,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-public class WifiChangeReceiver extends BroadcastReceiver {
+public class WifiChangeReceiver extends WakefulBroadcastReceiver {
     private String  HomeSSID = "\"CrimeMasterGogo\"";
 
     public WifiChangeReceiver() {
@@ -90,9 +92,16 @@ public class WifiChangeReceiver extends BroadcastReceiver {
 
         Log.d("asdf", "Finally got an IP address");
 
+        /* Set the last command */
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.command_file),
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("lastCommand", "E");
+        editor.commit();
+
         /* Send enable command to the switch */
         Intent msgIntent = new Intent(context, CommunicationService.class);
-        msgIntent.putExtra("command", "E");
-        context.startService(msgIntent);
+        msgIntent.putExtra("source", "WifiChangeReceiver");
+        startWakefulService(context, msgIntent);
     }
 }

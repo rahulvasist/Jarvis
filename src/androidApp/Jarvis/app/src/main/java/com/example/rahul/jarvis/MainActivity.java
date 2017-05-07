@@ -2,6 +2,7 @@ package com.example.rahul.jarvis;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -54,17 +55,29 @@ public class MainActivity extends AppCompatActivity {
         getRuntimePermissions();
     }
 
-    private void sendCommandToServer(String cmd) {
+    private void sendCommandToServer() {
         Intent intent = new Intent(this, CommunicationService.class);
-        intent.putExtra("command", cmd);
+        intent.putExtra("source", "MainActivity");
         startService(intent);
     }
 
+    private void setLastCommand(String command)
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.command_file),
+                MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("lastCommand", command);
+        editor.commit();
+    }
+
     public void onButtonClicked(View view) {
-        sendCommandToServer("E");
+        setLastCommand("E");
+        sendCommandToServer();
     }
 
     public void offButtonClicked(View view) {
-        sendCommandToServer("D");
+        setLastCommand("D");
+        sendCommandToServer();
     }
 }

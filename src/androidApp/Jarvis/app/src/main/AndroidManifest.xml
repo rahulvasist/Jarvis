@@ -33,7 +33,12 @@
 
         <service
             android:name=".CommunicationService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="false"></receiver>
     </application>
 
 </manifest>
