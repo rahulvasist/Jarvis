@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ipAddress = (EditText) findViewById(R.id.ipAddressTextField);
+        ipAddress.setText(getString(R.string.default_ip_address));
 
         getRuntimePermissions();
     }
@@ -71,12 +72,25 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
+    private void setIPAddress()
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.command_file),
+                MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("ipAddress", ipAddress.getText().toString());
+        editor.commit();
+
+    }
+
     public void onButtonClicked(View view) {
+        setIPAddress();
         setLastCommand("E");
         sendCommandToServer();
     }
 
     public void offButtonClicked(View view) {
+        setIPAddress();
         setLastCommand("D");
         sendCommandToServer();
     }

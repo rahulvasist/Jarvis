@@ -20,15 +20,17 @@ public class CommunicationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d("CommunicationService", "Communication service received intent");
         if (intent == null)
             return;
 
         String  serverReply;
         int     MAX_RETRIES = 5;
-        String  ipAddress = "192.168.0.20";
+        String  ipAddress = getIPAddress();
         int     ESP_PORT = 5000;
         String  command = getLastCommand();
 
+        Log.d("CommunicationService", "Ip address is " + ipAddress);
         for (int tries = 0; tries < MAX_RETRIES; tries++) {
             try {
                 Socket clientSocket = new Socket(ipAddress, ESP_PORT);
@@ -42,13 +44,21 @@ public class CommunicationService extends IntentService {
                 Log.d("CommunicationService", "Server reply: " + serverReply);
                 clientSocket.close();
                 setRepeatCommand(command);
-                releaseLock(intent);
+                checkReleaseLock(intent);
                 return;
 
             } catch (Exception e) {
                 Log.d("CommunicationService", "Exception thrown: " + e);
             }
         }
+    }
+
+    private String getIPAddress()
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.command_file),
+                MODE_PRIVATE);
+
+        return sharedPreferences.getString("ipAddress", getString(R.string.default_ip_address));
     }
 
     private String getLastCommand() {
@@ -72,9 +82,10 @@ public class CommunicationService extends IntentService {
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC, nextAlarmTime, pendingIntent);
+        Log.d("CommunicationService", "Next alarm has been set");
     }
 
-    private void releaseLock(Intent intent)
+    private void checkReleaseLock(Intent intent)
     {
         String source = intent.getStringExtra("source");
 
